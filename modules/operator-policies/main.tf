@@ -30,7 +30,7 @@ locals {
     },
     {
       policy_name    = substr("${var.account_role_prefix}-openshift-ingress-operator-cloud-credentials", 0, 64)
-      policy_details = data.rhcs_policies.all_policies.operator_role_policies["shared_vpc_openshift_ingress_operator_cloud_credentials_policy"]
+      policy_details = data.rhcs_policies.all_policies.operator_role_policies["openshift_ingress_operator_cloud_credentials_policy"]
       namespace      = "openshift-ingress-operator"
       operator_name  = "cloud-credentials"
     },

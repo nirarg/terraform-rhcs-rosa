@@ -13,8 +13,8 @@ module "operator_policies" {
   openshift_version   = module.account_iam_resources.openshift_version
 }
 
-module "oidc_config_resources" {
-  source = "../../modules/oidc-config-resources"
+module "unmanaged_oidc_config" {
+  source = "../../modules/unmanaged-oidc-config"
 }
 
 module "oidc_provider" {
