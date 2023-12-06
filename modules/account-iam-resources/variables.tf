@@ -26,8 +26,3 @@ variable "tags" {
   type        = map(string)
   default     = null
 }
-
-variable "ocm_environment" {
-  type    = string
-  default = "production"
-}

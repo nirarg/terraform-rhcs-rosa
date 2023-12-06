@@ -5,7 +5,6 @@ module "account_iam_resources" {
   source = "../../modules/account-iam-resources"
 
   account_role_prefix = "${var.cluster_name}-account"
-  ocm_environment     = var.ocm_environment
   openshift_version   = var.openshift_version
 }
 
