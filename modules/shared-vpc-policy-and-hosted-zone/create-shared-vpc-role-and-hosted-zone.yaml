@@ -1,0 +1,108 @@
+Parameters:
+  TargetAWSAccount:
+    Description: Installer ARN from target account
+    Type: Number
+
+  InstallerRoleName:
+    Description: Installer ARN from target account
+    Type: String
+
+  IngressOperatorRoleName:
+    Description: Ingress Operator ARN from target account
+    Type: String
+
+  PrivateSubnet:
+    Description: Private subnet
+    Type: String
+
+  PublicSubnet:
+    Description: Public subnet
+    Type: String
+
+  HostedZoneBaseDomain:
+    Description: Base Domain
+    Type: String
+
+  ClusterName:
+    Description: Cluster Name
+    Type: String
+
+  VpcId:
+    Description: The VPC ID
+    Type: String
+    
+  SharedVpcRoleName:
+    Description: The shared VPC role name
+    Type: String
+
+Resources:
+  SharedVPCRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref SharedVpcRoleName
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/ResourceGroupsandTagEditorFullAccess
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: ""
+          Effect: Allow
+          Principal:
+            AWS:
+            - !Join [ '', [ "arn:aws:iam::", !Ref TargetAWSAccount, ":role/", !Ref IngressOperatorRoleName ] ]
+            - !Join [ '', [ "arn:aws:iam::", !Ref TargetAWSAccount, ":role/", !Ref InstallerRoleName ] ]
+          Action: sts:AssumeRole
+      Description: Role that will be assumed from the Target AWS account where the cluster resides
+
+  SharedVPCPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: SharedVPCPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - "route53:ChangeResourceRecordSets"
+          - "route53:ListHostedZones"
+          - "route53:ListHostedZonesByName"
+          - "route53:ListResourceRecordSets"
+          - "route53:ChangeTagsForResource"
+          - "route53:GetAccountLimit"
+          - "route53:GetChange"
+          - "route53:GetHostedZone"
+          - "route53:ListTagsForResource"
+          - "route53:UpdateHostedZoneComment"
+          - "tag:GetResources"
+          - "tag:UntagResources"
+          Resource: '*'
+      Roles:
+      - !Ref SharedVPCRole
+
+  ResourceShare:
+    Type: AWS::RAM::ResourceShare
+    Properties:
+      AllowExternalPrincipals: false
+      Name: !Ref AWS::StackName
+      Principals:
+      - !Ref TargetAWSAccount
+      ResourceArns:
+      - !Join [ '', [ "arn:aws:ec2:", !Ref AWS::Region, ':', !Ref AWS::AccountId, ':', "subnet/", !Ref PublicSubnet] ]
+      - !Join [ '', [ "arn:aws:ec2:", !Ref AWS::Region, ':', !Ref AWS::AccountId, ':', "subnet/", !Ref PrivateSubnet] ]
+
+  SharedVPCHostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: !Join [ '.', [ !Ref ClusterName, !Ref HostedZoneBaseDomain ] ]
+      VPCs:
+      - VPCId: !Ref VpcId
+        VPCRegion: !Ref AWS::Region
+
+Outputs:
+  SharedRole:
+    Description: Shared Role
+    Value: !GetAtt SharedVPCRole.Arn
+
+  HostedZoneId:
+    Description: Hosted Zone ID
+    Value: !Ref SharedVPCHostedZone
