@@ -88,7 +88,7 @@ module "shared-vpc-policy-and-hosted-zone" {
   cluster_name              = var.cluster_name
   target_aws_account        = data.aws_caller_identity.current.account_id
   installer_role_arn        = module.account_iam_resources.account_roles_arn["Installer"]
-  ingress_operator_role_arn = module.operator_roles.operator_roles_arn["cloud-credentials"]
+  ingress_operator_role_arn = module.operator_roles.operator_roles_arn["openshift-ingress-operator"]
   subnets                   = concat(module.vpc.private_subnets, module.vpc.public_subnets)
   hosted_zone_base_domain   = rhcs_dns_domain.dns_domain.id
   vpc_id                    = module.vpc.vpc_id
