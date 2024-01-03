@@ -13,6 +13,16 @@ locals {
     operator_role_prefix = var.operator_role_prefix,
     oidc_config_id       = var.oidc_config_id
   }
+  private_hosted_zone = var.private_hosted_zone_id == null ? null : {
+    id       = var.private_hosted_zone_id
+    role_arn = var.private_hosted_zone_role_arn
+  }
+}
+
+data "aws_subnet" "provided_subnet" {
+  count = length(var.aws_subnet_ids)
+
+  id = var.aws_subnet_ids[count.index]
 }
 
 resource "rhcs_cluster_rosa_classic" "rosa_sts_cluster" {
@@ -26,13 +36,14 @@ resource "rhcs_cluster_rosa_classic" "rosa_sts_cluster" {
   }
   sts                = local.sts_roles
   aws_subnet_ids     = var.aws_subnet_ids
-  availability_zones = var.availability_zones
+  availability_zones = distinct(data.aws_subnet.provided_subnet[*].availability_zone)
   // aws_private_link   = var.aws_private_link
   // private            = var.private
   multi_az             = var.multi_az
   admin_credentials    = var.admin_credentials
   autoscaling_enabled  = var.autoscaling_enabled
   base_dns_domain      = var.base_dns_domain
+  private_hosted_zone  = local.private_hosted_zone
   compute_machine_type = var.compute_machine_type
   min_replicas         = var.min_replicas
   max_replicas         = var.max_replicas

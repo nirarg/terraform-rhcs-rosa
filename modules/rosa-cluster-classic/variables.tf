@@ -45,11 +45,6 @@ variable "aws_subnet_ids" {
   default = null
 }
 
-variable "availability_zones" {
-  type    = list(string)
-  default = null
-}
-
 variable "aws_private_link" {
   type    = bool
   default = false
@@ -92,5 +87,15 @@ variable "min_replicas" {
 
 variable "max_replicas" {
   type    = number
+  default = null
+}
+
+variable "private_hosted_zone_id" {
+  type    = string
+  default = null
+}
+
+variable "private_hosted_zone_role_arn" {
+  type    = string
   default = null
 }

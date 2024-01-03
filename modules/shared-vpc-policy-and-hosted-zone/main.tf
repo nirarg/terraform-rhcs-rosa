@@ -67,6 +67,13 @@ resource "aws_ram_resource_share" "shared_vpc_resource_share" {
   allow_external_principals = true
 }
 
+resource "aws_ram_principal_association" "shared_vpc_resource_share" {
+  principal          = var.target_aws_account
+  resource_share_arn = aws_ram_resource_share.shared_vpc_resource_share.arn
+}
+
+# resource "aws_ram_sharing_with_organization" "shared_vpc_resource_share" {}
+
 resource "aws_ram_resource_association" "shared_vpc_resource_association" {
   count = length(var.subnets)
 

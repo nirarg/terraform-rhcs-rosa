@@ -8,6 +8,9 @@ resource "aws_vpc" "site" {
     },
     var.tags,
   )
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_vpc_endpoint" "s3" {
@@ -27,6 +30,9 @@ resource "aws_subnet" "public" {
     },
     var.tags,
   )
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_subnet" "private" {
@@ -41,6 +47,9 @@ resource "aws_subnet" "private" {
     },
     var.tags,
   )
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 
@@ -55,6 +64,9 @@ resource "aws_internet_gateway" "site" {
     },
     var.tags,
   )
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 #
@@ -70,6 +82,9 @@ resource "aws_eip" "nat" {
     },
     var.tags,
   )
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 
@@ -101,6 +116,9 @@ resource "aws_route_table" "public" {
     },
     var.tags,
   )
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_route_table" "private" {
@@ -113,6 +131,9 @@ resource "aws_route_table" "private" {
     },
     var.tags,
   )
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 #

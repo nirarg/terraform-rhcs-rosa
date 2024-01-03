@@ -2,6 +2,7 @@
 variable "cluster_id" {
   description = "Identifier of the cluster."
   type        = string
+  default     = null
 }
 
 // Required
@@ -14,6 +15,7 @@ variable "name" {
 variable "machine_type" {
   description = "Identifier of the machine type used by the nodes, for example `m5.xlarge`. Use the `rhcs_machine_types` data source to find the possible values."
   type        = string
+  default     = null
 }
 
 variable "replicas" {
@@ -54,7 +56,7 @@ variable "max_replicas" {
 
 variable "taints" {
   description = "Taints for a machine pool. This list will overwrite any modifications made to node taints on an ongoing basis."
-  type        = list(object({
+  type = list(object({
     key           = string
     value         = string
     schedule_type = string

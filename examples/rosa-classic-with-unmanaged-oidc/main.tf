@@ -71,33 +71,47 @@ module "rosa_cluster_classic" {
   cluster_name          = var.cluster_name
   operator_role_prefix  = module.operator_roles.operator_role_prefix
   openshift_version     = var.openshift_version
-  replicas              = 3
+  replicas              = var.replicas
   installer_role_arn    = module.account_iam_resources.account_roles_arn["Installer"]
   support_role_arn      = module.account_iam_resources.account_roles_arn["Support"]
   controlplane_role_arn = module.account_iam_resources.account_roles_arn["ControlPlane"]
   worker_role_arn       = module.account_iam_resources.account_roles_arn["Worker"]
   oidc_config_id        = module.oidc_provider.oidc_config_id
   aws_subnet_ids        = concat(module.vpc.private_subnets, module.vpc.public_subnets)
-  availability_zones    = module.vpc.availability_zones
   //aws_private_link      = true
   //private               = true
-  multi_az          = true
-  admin_credentials = { username = "admin1", password = "123456!qwertyU" }
+  multi_az             = true
+  admin_credentials    = { username = "admin1", password = "123456!qwertyU" }
+  compute_machine_type = var.machine_type
 }
 
 ############################
 # machine-pool
 ############################
-module "rosa_machine_pool" {
-  source = "../../modules/machine-pool"
+# module "rosa_machine_pool" {
+#   source = "../../modules/machine-pool"
+# 
+#   cluster_id   = module.rosa_cluster_classic.cluster_id
+#   name         = "${var.cluster_name}-machine-pool"
+#   machine_type = var.machine_type
+# 
+#   // Should set one of replicas autoscaling_enabled
+#   replicas            = var.replicas
+#   autoscaling_enabled = var.autoscaling_enabled
+#   min_replicas        = var.min_replicas
+#   max_replicas        = var.max_replicas
+# }
 
-  cluster_id   = module.rosa_cluster_classic.cluster_id
-  name         = "${var.cluster_name}-machine-pool"
-  machine_type = var.machine_type
-
-  // Should set one of replicas autoscaling_enabled
-  replicas            = var.replicas
-  autoscaling_enabled = var.autoscaling_enabled
-  min_replicas        = var.min_replicas
-  max_replicas        = var.max_replicas
-}
+############################
+# default machine-pool
+# The default machine-pool was already created by the cluster
+# This call will cause to import the existing machine-pool
+############################
+# module "default_machine_pool" {
+#   source = "../../modules/machine-pool"
+# 
+#   name         = "worker"
+#   cluster_id   = module.rosa_cluster_classic.cluster_id
+#   machine_type = var.machine_type
+#   replicas     = var.replicas
+# }
