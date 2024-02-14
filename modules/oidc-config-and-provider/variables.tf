@@ -4,6 +4,11 @@ variable "managed" {
   default     = true
 }
 
+variable "create_unmanaged_oidc_config" {
+  type    = bool
+  default = null
+}
+
 variable "secret_arn" {
   type        = string
   description = "Indicates for unmanaged OIDC config, the secret ARN"
@@ -20,12 +25,6 @@ variable "installer_role_arn" {
   type        = string
   description = "STS Role ARN with get secrets permission"
   default     = null
-}
-
-variable "cluster_id" {
-  type        = string
-  description = "The cluster ID"
-  default     = ""
 }
 
 variable "tags" {

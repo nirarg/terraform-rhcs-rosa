@@ -104,10 +104,10 @@ variable "create_oidc" {
   default     = false
 }
 
-variable "oidc" {
+variable "managed_oidc" {
   description = "OIDC type managed or unmanaged oidc"
-  type        = string
-  default     = "managed"
+  type        = bool
+  default     = true
 }
 
 
@@ -145,4 +145,21 @@ variable "multi_az" {
   description = "Create the vpc subnets in only one AZ"
   type        = bool
   default     = true
+}
+
+variable "create_unmanaged_oidc_config" {
+  type    = bool
+  default = true
+}
+
+variable "secret_arn" {
+  type        = string
+  description = "Indicates for unmanaged OIDC config, the secret ARN"
+  default     = null
+}
+
+variable "issuer_url" {
+  type        = string
+  description = "Indicates for unmanaged OIDC config, the bucket URL"
+  default     = null
 }
